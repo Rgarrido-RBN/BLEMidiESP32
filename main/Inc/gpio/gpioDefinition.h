@@ -13,7 +13,14 @@
 #include <stdlib.h>
 #include "driver/gpio.h"
 
-const int BUTTON_PRESET_PIN = 11;
+const int BUTTON_PRESET_UP_PIN = 5;
+const int BUTTON_PRESET_DOWN_PIN = 6;
+const int BUTTON_1_PIN = 7;
+const int BUTTON_2_PIN = 8;
+const int BUTTON_3_PIN = 9;
+const int BUTTON_4_PIN = 10;
+const int BUTTON_5_PIN = 11;
+const int BUTTON_6_PIN = 12;
 
 typedef enum {
     NOPULL_MODE = 0,
