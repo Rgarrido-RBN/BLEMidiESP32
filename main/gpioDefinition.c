@@ -13,7 +13,7 @@
 const int ENABLE = 1;
 const int DISABLE = 0;
 
-static xQueueHandle gpioInterruptQueue = NULL;
+xQueueHandle gpioInterruptQueue = NULL;
 
 int gpioInterruptModesLookUpTable[] = {
 
