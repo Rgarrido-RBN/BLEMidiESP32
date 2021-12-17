@@ -16,11 +16,10 @@ public:
 	virtual ~gpioESP32();
 
 	void enableInterruptPin(int pin);
-	bool getValue();
-	void setValue(int valueToSet);
-	bool togglePin();
-
-
+	bool getValue() override;
+	void setValue(int valueToSet) override;
+	bool togglePin() override;
+	int getPin() override;
 private:
 	int mPinName;
 	int mInterruptMode;

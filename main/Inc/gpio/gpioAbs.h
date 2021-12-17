@@ -16,6 +16,9 @@ public:
 	virtual bool getValue();
 	virtual void setValue(int valueToSet);
 	virtual bool togglePin();
+	virtual int getPin();
+private:
+	int mPin;
 };
 
 #endif /* MAIN_GPIO_GPIOABS_H_ */

@@ -10,6 +10,9 @@
 #include "freertos/queue.h"
 #include "freertos/task.h"
 
+const int LED_ON = 1;
+const int LED_OFF = 1;
+
 extern xQueueHandle gpioInterruptQueue;
 
 ButtonManager::ButtonManager(buttonPtr button1, buttonPtr button2, 
@@ -24,11 +27,23 @@ ButtonManager::ButtonManager(buttonPtr button1, buttonPtr button2,
 void ButtonManager::manageButtonEventsTask(void* args)
 {
 	uint32_t buttonPressed;
+	ButtonManager buttonManagerArgs =  (ButtonManager)args;
+
 	while(1)
 	{
 		if(xQueueReceive(gpioInterruptQueue, &buttonPressed, portMAX_DELAY))
 		{
-			//TODO: Implement logic for button pressed
+			for (auto it = begin(buttonManagerArgs->mButtonVector); it != end(buttonManagerArgs->mButtonVector); ++it)
+			{
+			    if(buttonPressed == it->)
+			    {
+			    	if(it->mLed != nullptr)
+					{
+			    		it->mLed->setValue(LED_ON);
+					}
+			    }
+
+			}
 		}
 		vTaskDelay(1000 / portTICK_RATE_MS);
 	}

@@ -7,3 +7,7 @@
 
 #include "button/Button.h"
 
+int Button::getPin()
+{
+    return mButton->getPin();
+}

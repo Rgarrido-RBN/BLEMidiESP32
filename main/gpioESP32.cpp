@@ -38,6 +38,10 @@ void gpioESP32::setValue(int valueToSet)
 	gpio_set_level((gpio_num_t)mPinName, valueToSet);
 }
 
+int gpioESP32::getPin()
+{
+	return mPinName;
+}
 void gpioESP32::enableInterruptPin(int pin)
 {
 	setButtonInterruptCallback(pin);
