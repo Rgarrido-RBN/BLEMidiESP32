@@ -10,7 +10,7 @@
 
 #include "button/Button.h"
 #include <memory>
-#include <vector>
+#include <map>
 
 using buttonPtr = std::shared_ptr<Button>;
 
@@ -28,7 +28,8 @@ public:
 private:
 
 	void createManageButtonsTask();
-
+	void insertButtonInMap();
+	
 	buttonPtr mButton1;
 	buttonPtr mButton2;
 	buttonPtr mButton3;
@@ -38,10 +39,7 @@ private:
 	buttonPtr mButton7;
 	buttonPtr mButton8;
 
-    std::vector<buttonPtr> mButtonVector = {
-			mButton1, mButton2, mButton3,mButton4,
-			mButton5, mButton6, mButton7, mButton8};
-
+    std::map<int, buttonPtr> mButtonMap;
 };
 
 using buttonManagerPtr = std::shared_ptr<ButtonManager>;

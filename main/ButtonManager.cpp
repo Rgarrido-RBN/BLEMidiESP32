@@ -22,28 +22,22 @@ ButtonManager::ButtonManager(buttonPtr button1, buttonPtr button2,
 	mButton5(button5), mButton6(button6), mButton7(button7), mButton8(button8)
 {
 	createManageButtonsTask();
+	insertButtonInMap();
 }
 
 void ButtonManager::manageButtonEventsTask(void* args)
 {
 	uint32_t buttonPressed;
-	ButtonManager buttonManagerArgs =  (ButtonManager)args;
-
+	ButtonManager* buttonManagerArgs =  (ButtonManager*)args;
+	
 	while(1)
 	{
 		if(xQueueReceive(gpioInterruptQueue, &buttonPressed, portMAX_DELAY))
 		{
-			for (auto it = begin(buttonManagerArgs->mButtonVector); it != end(buttonManagerArgs->mButtonVector); ++it)
+		    for (auto it = buttonManagerArgs->mButtonMap.find(buttonPressed); it != buttonManagerArgs->mButtonMap.end(); it++) 
 			{
-			    if(buttonPressed == it->)
-			    {
-			    	if(it->mLed != nullptr)
-					{
-			    		it->mLed->setValue(LED_ON);
-					}
-			    }
-
-			}
+                it->second->mLed->setValue(LED_ON);
+            }
 		}
 		vTaskDelay(1000 / portTICK_RATE_MS);
 	}
@@ -52,4 +46,16 @@ void ButtonManager::manageButtonEventsTask(void* args)
 void ButtonManager::createManageButtonsTask()
 {
 	xTaskCreate(manageButtonEventsTask, "ButtonEventsTask", 2048, this, 10, NULL);
-} 
+}
+
+void ButtonManager::insertButtonInMap()
+{
+	mButtonMap.insert(make_pair(mButton1->getPin(), mButton1));
+	mButtonMap.insert(make_pair(mButton2->getPin(), mButton2));
+	mButtonMap.insert(make_pair(mButton3->getPin(), mButton3));
+	mButtonMap.insert(make_pair(mButton4->getPin(), mButton4));
+	mButtonMap.insert(make_pair(mButton5->getPin(), mButton5));
+	mButtonMap.insert(make_pair(mButton6->getPin(), mButton6));
+	mButtonMap.insert(make_pair(mButton7->getPin(), mButton7));
+	mButtonMap.insert(make_pair(mButton8->getPin(), mButton8));
+}
