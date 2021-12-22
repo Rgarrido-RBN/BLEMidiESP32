@@ -21,6 +21,12 @@ const int BUTTON_3_PIN = 9;
 const int BUTTON_4_PIN = 10;
 const int BUTTON_5_PIN = 11;
 const int BUTTON_6_PIN = 12;
+const int LED_1_PIN = 13;
+const int LED_2_PIN = 14;
+const int LED_3_PIN = 15;
+const int LED_4_PIN = 16;
+const int LED_5_PIN = 17;
+const int LED_6_PIN = 18;
 
 typedef enum {
     NOPULL_MODE = 0,

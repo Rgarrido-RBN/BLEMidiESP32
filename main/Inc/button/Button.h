@@ -24,7 +24,17 @@ public:
 	bool getValue();
 	int getPin();
 
+	void convertToPresetButton();
+	void convertToPedalButton();
+	void convertToBankButton();
+
+	void buttonPressed();
+private:
 	std::shared_ptr<gpioAbs> mButton;
 	std::shared_ptr<Led> mLed;
+
+	bool mPresetMode{true}; // Preset mode is default mode
+	bool mPedalMode{false};
+	bool mBankMode{false};
 };
 #endif /* MAIN_INC_BUTTON_BUTTON_H_ */

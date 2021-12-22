@@ -36,7 +36,7 @@ void ButtonManager::manageButtonEventsTask(void* args)
 		{
 		    for (auto it = buttonManagerArgs->mButtonMap.find(buttonPressed); it != buttonManagerArgs->mButtonMap.end(); it++) 
 			{
-                it->second->mLed->setValue(LED_ON);
+                it->second->buttonPressed();
             }
 		}
 		vTaskDelay(1000 / portTICK_RATE_MS);
