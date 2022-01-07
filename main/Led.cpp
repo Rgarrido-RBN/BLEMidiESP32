@@ -8,7 +8,8 @@
 #include "led/Led.h"
 
 
-Led::~Led() {
+Led::~Led() 
+{
 	// TODO Auto-generated destructor stub
 }
 
@@ -17,3 +18,11 @@ void Led::setValue(bool value)
 	mLed->setValue(value);
 }
 
+int Led::toggleLed()
+{
+	if(!mLed->togglePin())
+	{
+		return -1;
+	}
+	return 0;
+}

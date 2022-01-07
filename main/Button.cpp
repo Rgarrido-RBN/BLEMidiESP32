@@ -12,26 +12,31 @@ int Button::getPin()
     return mButton->getPin();
 }
 
-void Button::convertToPresetButton()
-{
-    mPresetMode = true;
-    mPedalMode = false;
-    mBankMode = false;
-}
-void Button::convertToPedalButton()
-{
-    mPedalMode = true;
-    mPresetMode = false;
-    mBankMode = false;
-
-}
-void Button::convertToBankButton()
-{
-    mBankMode = true;
-    mPresetMode = false;
-    mPedalMode = false;
-}
 void Button::buttonPressed()
 {
-     // TODO: Implememt logidc depending button mode
+    switch (mButtonMode)
+    {
+        case PEDAL_MODE:
+            mLed->toggleLed();
+        break;
+
+        case BANK_MODE:
+        break;
+
+        case PRESET_MODE:
+            mLed->setValue(true);
+        break;
+    }
+}
+
+void Button::setMidiMessage(int status, int note, int velocity)
+{
+    mMidiMessage[0] = status;
+    mMidiMessage[1] = note;
+    mMidiMessage[2] = velocity;
+}
+
+uint8_t* Button::getMidiMessage()
+{
+    return mMidiMessage;
 }

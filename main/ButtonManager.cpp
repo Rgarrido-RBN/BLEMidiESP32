@@ -17,9 +17,10 @@ extern xQueueHandle gpioInterruptQueue;
 
 ButtonManager::ButtonManager(buttonPtr button1, buttonPtr button2, 
 		buttonPtr button3, buttonPtr button4, buttonPtr button5,
-		buttonPtr button6, buttonPtr button7, buttonPtr button8):
+		buttonPtr button6, buttonPtr button7, buttonPtr button8, MidiAbsPtr midiInstance):
 	mButton1(button1), mButton2(button2), mButton3(button3), mButton4(button4),
-	mButton5(button5), mButton6(button6), mButton7(button7), mButton8(button8)
+	mButton5(button5), mButton6(button6), mButton7(button7), mButton8(button8),
+	mMidiInstance(midiInstance)
 {
 	createManageButtonsTask();
 	insertButtonInMap();
@@ -29,7 +30,7 @@ void ButtonManager::manageButtonEventsTask(void* args)
 {
 	uint32_t buttonPressed;
 	ButtonManager* buttonManagerArgs =  (ButtonManager*)args;
-	
+	uint8_t* messageToSend;
 	while(1)
 	{
 		if(xQueueReceive(gpioInterruptQueue, &buttonPressed, portMAX_DELAY))
@@ -37,6 +38,8 @@ void ButtonManager::manageButtonEventsTask(void* args)
 		    for (auto it = buttonManagerArgs->mButtonMap.find(buttonPressed); it != buttonManagerArgs->mButtonMap.end(); it++) 
 			{
                 it->second->buttonPressed();
+				messageToSend = it->second->getMidiMessage();
+				buttonManagerArgs->mMidiInstance->sendMessage(messageToSend);
             }
 		}
 		vTaskDelay(1000 / portTICK_RATE_MS);
@@ -51,11 +54,12 @@ void ButtonManager::createManageButtonsTask()
 void ButtonManager::insertButtonInMap()
 {
 	mButtonMap.insert(make_pair(mButton1->getPin(), mButton1));
-	mButtonMap.insert(make_pair(mButton2->getPin(), mButton2));
 	mButtonMap.insert(make_pair(mButton3->getPin(), mButton3));
+	mButtonMap.insert(make_pair(mButton2->getPin(), mButton2));
 	mButtonMap.insert(make_pair(mButton4->getPin(), mButton4));
 	mButtonMap.insert(make_pair(mButton5->getPin(), mButton5));
 	mButtonMap.insert(make_pair(mButton6->getPin(), mButton6));
 	mButtonMap.insert(make_pair(mButton7->getPin(), mButton7));
 	mButtonMap.insert(make_pair(mButton8->getPin(), mButton8));
 }
+

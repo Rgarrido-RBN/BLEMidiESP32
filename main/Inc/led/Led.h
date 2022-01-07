@@ -16,6 +16,7 @@ public:
 	Led(std::shared_ptr<gpioAbs> led):mLed(led){}
 	virtual ~Led();
 	void setValue(bool value);
+	int toggleLed();
 private:
 	std::shared_ptr<gpioAbs> mLed{nullptr};
 };

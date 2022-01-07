@@ -8,11 +8,10 @@
 #ifndef MAIN_INC_BUTTON_BUTTONMANAGER_H_
 #define MAIN_INC_BUTTON_BUTTONMANAGER_H_
 
-#include "button/Button.h"
 #include <memory>
 #include <map>
-
-using buttonPtr = std::shared_ptr<Button>;
+#include "button/Button.h"
+#include "bluetooth/BLEMidiESP32.h"
 
 class ButtonManager
 {
@@ -20,7 +19,8 @@ public:
 
 	ButtonManager(buttonPtr button1, buttonPtr button2, 
 		buttonPtr button3, buttonPtr button4, buttonPtr button5,
-		buttonPtr button6, buttonPtr button7, buttonPtr button8);
+		buttonPtr button6, buttonPtr button7, buttonPtr button8,
+		MidiAbsPtr midiInstance);
 	virtual ~ButtonManager(){};
 
 	static void manageButtonEventsTask(void* args);
@@ -39,6 +39,7 @@ private:
 	buttonPtr mButton7;
 	buttonPtr mButton8;
 
+    MidiAbsPtr mMidiInstance;
     std::map<int, buttonPtr> mButtonMap;
 };
 

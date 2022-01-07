@@ -26,6 +26,11 @@ extern "C"
   void app_main(void);
 }
 
+void midiMessageCallback(uint8_t blemidi_port, uint16_t timestamp, uint8_t midi_status, uint8_t *remaining_message, size_t len, size_t continued_sysex_pos)
+{
+    ESP_LOGI("INIT BLUETOOTH", "**** App Init ****");
+}
+
 void app_main(void)
 {
     ESP_LOGI("INIT PROGRAM", "**** App Init ****");
@@ -47,10 +52,8 @@ void app_main(void)
     std::shared_ptr<gpioAbs> led5Pin = std::make_shared<gpioESP32>(LED_5_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> led6Pin = std::make_shared<gpioESP32>(LED_6_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
 
-    std::shared_ptr<Button> buttonPresetUp = std::make_shared<Button>(buttonPresetUpPin);
-    std::shared_ptr<Button> buttonPresetDown = std::make_shared<Button>(buttonPresetDownPin);
-    buttonPresetUp->convertToBankButton();
-    buttonPresetDown->convertToBankButton();
+    std::shared_ptr<Button> buttonPresetUp = std::make_shared<Button>(buttonPresetUpPin, PRESET_MODE);
+    std::shared_ptr<Button> buttonPresetDown = std::make_shared<Button>(buttonPresetDownPin, PRESET_MODE);
 
     std::shared_ptr<Led> led1 = std::make_shared<Led>(led1Pin);
     std::shared_ptr<Led> led2 = std::make_shared<Led>(led2Pin);
@@ -59,18 +62,29 @@ void app_main(void)
     std::shared_ptr<Led> led5 = std::make_shared<Led>(led5Pin);
     std::shared_ptr<Led> led6 = std::make_shared<Led>(led6Pin);  
 
-    std::shared_ptr<Button> button1 = std::make_shared<Button>(button1Pin, led1);
-    std::shared_ptr<Button> button2 = std::make_shared<Button>(button2Pin, led2);
-    std::shared_ptr<Button> button3 = std::make_shared<Button>(button3Pin, led3);
-    std::shared_ptr<Button> button4 = std::make_shared<Button>(button4Pin, led4);
-    std::shared_ptr<Button> button5 = std::make_shared<Button>(button5Pin, led5);
-    std::shared_ptr<Button> button6 = std::make_shared<Button>(button6Pin, led6);
-  
+    std::shared_ptr<Button> button1 = std::make_shared<Button>(button1Pin, led1, PEDAL_MODE);
+    std::shared_ptr<Button> button2 = std::make_shared<Button>(button2Pin, led2, PEDAL_MODE);
+    std::shared_ptr<Button> button3 = std::make_shared<Button>(button3Pin, led3, PEDAL_MODE);
+    std::shared_ptr<Button> button4 = std::make_shared<Button>(button4Pin, led4, PEDAL_MODE);
+    std::shared_ptr<Button> button5 = std::make_shared<Button>(button5Pin, led5, PEDAL_MODE);
+    std::shared_ptr<Button> button6 = std::make_shared<Button>(button6Pin, led6, PEDAL_MODE);
+
+    std::shared_ptr<MidiAbs> midiBLEInstance = std::shared_ptr<BLEMidiESP32>();
+    midiBLEInstance->init();
+
+    /********* DEMO MESSAGE ***********/
+    uint8_t message[3];
+    message[0] = 0x90;
+    message[1] = 0x3c;
+    message[2] = 0x7f;
+
     std::shared_ptr<ButtonManager> pedalboardButtonManager = std::make_shared<ButtonManager>(buttonPresetUp, buttonPresetDown, 
-      button1, button2, button3, button4, button5, button6);
-  
+      button1, button2, button3, button4, button5, button6, midiBLEInstance);
+
     while(1)
     {
+        ESP_LOGI("MIDI MESSAGE", "SENDING MIDI NOTE TO DEVICE");
+        midiBLEInstance->sendMessage(message);
         vTaskDelay(1000 / portTICK_RATE_MS);
     }
 }
