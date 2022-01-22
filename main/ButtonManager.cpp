@@ -33,16 +33,19 @@ void ButtonManager::manageButtonEventsTask(void* args)
 	uint8_t* messageToSend;
 	while(1)
 	{
-		if(xQueueReceive(gpioInterruptQueue, &buttonPressed, portMAX_DELAY))
+		if(gpioInterruptQueue != NULL)
 		{
-		    for (auto it = buttonManagerArgs->mButtonMap.find(buttonPressed); it != buttonManagerArgs->mButtonMap.end(); it++) 
+			if(xQueueReceive(gpioInterruptQueue, &buttonPressed, portMAX_DELAY))
 			{
-                it->second->buttonPressed();
-				messageToSend = it->second->getMidiMessage();
-				buttonManagerArgs->mMidiInstance->sendMessage(messageToSend);
-            }
+				for (auto it = buttonManagerArgs->mButtonMap.find(buttonPressed); it != buttonManagerArgs->mButtonMap.end(); it++) 
+				{
+					it->second->buttonPressed();
+					messageToSend = it->second->getMidiMessage();
+					buttonManagerArgs->mMidiInstance->sendMessage(messageToSend);
+				}
+			}
+			vTaskDelay(1000 / portTICK_RATE_MS);
 		}
-		vTaskDelay(1000 / portTICK_RATE_MS);
 	}
 }
 

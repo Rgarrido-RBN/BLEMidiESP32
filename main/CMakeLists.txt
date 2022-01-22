@@ -4,4 +4,6 @@ idf_component_register(SRCS "main.cpp"
                             "Button.cpp"
                             "gpioDefinition.c"
                             "ButtonManager.cpp"
-                    INCLUDE_DIRS "./Inc/")
+                            "BLEMidiESP32.cpp"
+                    INCLUDE_DIRS "./Inc/"
+                    REQUIRES blemidi)

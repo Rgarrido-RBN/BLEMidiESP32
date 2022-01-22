@@ -10,7 +10,8 @@
 
 #include "gpio/gpioAbs.h"
 
-class gpioESP32: public gpioAbs{
+class gpioESP32: public gpioAbs
+{
 public:
 	gpioESP32(int pinName, int interruptMode, int pinMode, int pullMode);
 	virtual ~gpioESP32();

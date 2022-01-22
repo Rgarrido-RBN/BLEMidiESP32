@@ -9,49 +9,45 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
-extern "C"
-{
-  #include "esp_system.h"
-  #include "esp_log.h"
-  #include "blemidi.h"
-  #include "gpio/gpioDefinition.h"
-}
+#include "esp_system.h"
+#include "esp_log.h"
 #include "gpio/gpioESP32.h"
-#include "button/Button.h"
 #include "button/ButtonManager.h"
 #include "led/Led.h"
+#include "bluetooth/BLEMidiESP32.h"
 
 extern "C"
 {
+  #include "gpio/gpioDefinition.h"
   void app_main(void);
-}
-
-void midiMessageCallback(uint8_t blemidi_port, uint16_t timestamp, uint8_t midi_status, uint8_t *remaining_message, size_t len, size_t continued_sysex_pos)
-{
-    ESP_LOGI("INIT BLUETOOTH", "**** App Init ****");
 }
 
 void app_main(void)
 {
     ESP_LOGI("INIT PROGRAM", "**** App Init ****");
 
+    createGpioInterruptQueue();
+    
     std::shared_ptr<gpioAbs> buttonPresetUpPin = std::make_shared<gpioESP32>(BUTTON_PRESET_UP_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> buttonPresetDownPin = std::make_shared<gpioESP32>(BUTTON_PRESET_DOWN_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
-    
+    ESP_LOGI("INIT PROGRAM", "PRESET BUTTONS SUCCESFULLY INIT");
+
     std::shared_ptr<gpioAbs> button1Pin = std::make_shared<gpioESP32>(BUTTON_1_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> button2Pin = std::make_shared<gpioESP32>(BUTTON_2_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> button3Pin = std::make_shared<gpioESP32>(BUTTON_3_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> button4Pin = std::make_shared<gpioESP32>(BUTTON_4_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> button5Pin = std::make_shared<gpioESP32>(BUTTON_5_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> button6Pin = std::make_shared<gpioESP32>(BUTTON_6_PIN, PAL_GPIO_INTR_POSEDGE, PAL_GPIO_MODE_INPUT, PULLDOWN_MODE);
-
+    ESP_LOGI("INIT PROGRAM", "PEDAL BUTTONS SUCCESFULLY INIT");
+    
     std::shared_ptr<gpioAbs> led1Pin = std::make_shared<gpioESP32>(LED_1_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> led2Pin = std::make_shared<gpioESP32>(LED_2_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> led3Pin = std::make_shared<gpioESP32>(LED_3_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> led4Pin = std::make_shared<gpioESP32>(LED_4_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> led5Pin = std::make_shared<gpioESP32>(LED_5_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
     std::shared_ptr<gpioAbs> led6Pin = std::make_shared<gpioESP32>(LED_6_PIN, PAL_GPIO_INTR_DISABLE, PAL_GPIO_MODE_OUTPUT, PULLDOWN_MODE);
-
+    ESP_LOGI("INIT PROGRAM", "LED FOR BUTTONS SUCCESFULLY INIT");
+    
     std::shared_ptr<Button> buttonPresetUp = std::make_shared<Button>(buttonPresetUpPin, PRESET_MODE);
     std::shared_ptr<Button> buttonPresetDown = std::make_shared<Button>(buttonPresetDownPin, PRESET_MODE);
 
@@ -69,17 +65,17 @@ void app_main(void)
     std::shared_ptr<Button> button5 = std::make_shared<Button>(button5Pin, led5, PEDAL_MODE);
     std::shared_ptr<Button> button6 = std::make_shared<Button>(button6Pin, led6, PEDAL_MODE);
 
-    std::shared_ptr<MidiAbs> midiBLEInstance = std::shared_ptr<BLEMidiESP32>();
+    std::shared_ptr<MidiAbs> midiBLEInstance = std::make_shared<BLEMidiESP32>();
     midiBLEInstance->init();
 
+    std::shared_ptr<ButtonManager> pedalboardButtonManager = std::make_shared<ButtonManager>(buttonPresetUp, buttonPresetDown, 
+      button1, button2, button3, button4, button5, button6, midiBLEInstance);
+    
     /********* DEMO MESSAGE ***********/
     uint8_t message[3];
     message[0] = 0x90;
     message[1] = 0x3c;
     message[2] = 0x7f;
-
-    std::shared_ptr<ButtonManager> pedalboardButtonManager = std::make_shared<ButtonManager>(buttonPresetUp, buttonPresetDown, 
-      button1, button2, button3, button4, button5, button6, midiBLEInstance);
 
     while(1)
     {
