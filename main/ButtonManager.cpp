@@ -26,6 +26,10 @@ ButtonManager::ButtonManager(buttonPtr button1, buttonPtr button2,
 	insertButtonInMap();
 }
 
+/* When a button is pressed we look for on a map for the button
+ pressed and using a getter we know his message to send it to
+  MIDI instance */
+  
 void ButtonManager::manageButtonEventsTask(void* args)
 {
 	uint32_t buttonPressed;

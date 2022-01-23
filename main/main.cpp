@@ -66,7 +66,7 @@ void app_main(void)
     std::shared_ptr<Button> button6 = std::make_shared<Button>(button6Pin, led6, PEDAL_MODE);
 
     std::shared_ptr<MidiAbs> midiBLEInstance = std::make_shared<BLEMidiESP32>();
-    midiBLEInstance->init();
+    int status = midiBLEInstance->init();
 
     std::shared_ptr<ButtonManager> pedalboardButtonManager = std::make_shared<ButtonManager>(buttonPresetUp, buttonPresetDown, 
       button1, button2, button3, button4, button5, button6, midiBLEInstance);
@@ -79,8 +79,10 @@ void app_main(void)
 
     while(1)
     {
-        ESP_LOGI("MIDI MESSAGE", "SENDING MIDI NOTE TO DEVICE");
+      if(status == 0)
+      { //means ble midi interface successfully init
         midiBLEInstance->sendMessage(message);
         vTaskDelay(1000 / portTICK_RATE_MS);
+      }
     }
 }
