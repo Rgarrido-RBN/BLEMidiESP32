@@ -49,7 +49,7 @@ int BLEMidiESP32::outputFlush()
 int BLEMidiESP32::sendMessage(uint8_t* message)
 {
     midiTick();
-    ESP_LOGI("BLE MIDI MESSAGE", "SENDING MIDI NOTE TO DEVICE");
+    ESP_LOGD("BLE MIDI MESSAGE", "SENDING MIDI NOTE TO DEVICE");
     return blemidi_send_message(DEFAULT_PORT, message, sizeof(&message));   
 }
 

@@ -8,41 +8,23 @@
 #ifndef MAIN_INC_BUTTON_BUTTONMANAGER_H_
 #define MAIN_INC_BUTTON_BUTTONMANAGER_H_
 
-#include <memory>
-#include <map>
+#include "bluetooth/MidiAbs.h"
 #include "button/Button.h"
-#include "bluetooth/BLEMidiESP32.h"
+#include <list>
+#include <memory>
 
 class ButtonManager
 {
 public:
-
-	ButtonManager(buttonPtr button1, buttonPtr button2, 
-		buttonPtr button3, buttonPtr button4, buttonPtr button5,
-		buttonPtr button6, buttonPtr button7, buttonPtr button8,
-		MidiAbsPtr midiInstance);
-	virtual ~ButtonManager(){};
-
-	static void manageButtonEventsTask(void* args);
+    ButtonManager(std::list<buttonPtr> buttonList, std::shared_ptr<MidiAbs> midiInstance);
+    virtual ~ButtonManager(){};
 
 private:
-
-	void createManageButtonsTask();
-	void insertButtonInMap();
-	
-	buttonPtr mButton1;
-	buttonPtr mButton2;
-	buttonPtr mButton3;
-	buttonPtr mButton4;
-	buttonPtr mButton5;
-	buttonPtr mButton6;
-	buttonPtr mButton7;
-	buttonPtr mButton8;
-
-    MidiAbsPtr mMidiInstance;
-    std::map<int, buttonPtr> mButtonMap;
+    static void manageButtonEventsTask(void *args);
+    void createManageButtonsTask();
+    void insertButtonInMap();
+    std::list<buttonPtr> mButtonList{};
+    std::shared_ptr<MidiAbs> mMidiInstance{};
 };
-
-using buttonManagerPtr = std::shared_ptr<ButtonManager>;
 
 #endif /* MAIN_INC_BUTTON_BUTTONMANAGER_H_ */
