@@ -42,8 +42,7 @@ void ButtonManager::manageButtonEventsTask(void *args)
                 {
                     if(it->getPin() == buttonPressed)
                     {
-                        _this->mMidiInstance->= it->getMidiMessage();
-                        // TODO: do something with this message
+                        _this->mMidiInstance->sendMessage(it->getMidiMessage());
                     }
                 }
             }
