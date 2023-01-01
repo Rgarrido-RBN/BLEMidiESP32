@@ -16,9 +16,9 @@ const int LED_OFF = 1;
 extern xQueueHandle gpioInterruptQueue;
 
 // TODO: Send a list of buttons instead of all buttons
-ButtonManager::ButtonManager(std::list<buttonPtr> buttonList, std::shared_ptr<MidiAbs> midiInstance)
+ButtonManager::ButtonManager(std::list<buttonPtr> buttonList, std::shared_ptr<MidiInterface> midiIface)
     : mButtonList(buttonList)
-    , mMidiInstance(midiInstance)
+    , mMidiIface(midiIface)
 {
     createManageButtonsTask();
 }
@@ -42,7 +42,7 @@ void ButtonManager::manageButtonEventsTask(void *args)
                 {
                     if(it->getPin() == buttonPressed)
                     {
-                        _this->mMidiInstance->sendMessage(it->getMidiMessage());
+                        _this->mMidiIface->sendMessage(it->getMidiMessage());
                     }
                 }
             }
