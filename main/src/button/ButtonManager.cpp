@@ -20,6 +20,9 @@ ButtonManager::ButtonManager(std::list<buttonPtr> buttonList, std::shared_ptr<Mi
     : mButtonList(buttonList)
     , mMidiIface(midiIface)
 {
+    mMidiIface->openMidiBLE();
+    mMidiIface->openMidiUART();
+
     createManageButtonsTask();
 }
 
@@ -31,7 +34,6 @@ void ButtonManager::manageButtonEventsTask(void *args)
 {
     uint32_t buttonPressed;
     ButtonManager *_this = (ButtonManager *)args;
-    uint8_t *messageToSend;
     while(1)
     {
         if(gpioInterruptQueue != NULL)
@@ -42,7 +44,7 @@ void ButtonManager::manageButtonEventsTask(void *args)
                 {
                     if(it->getPin() == buttonPressed)
                     {
-                        _this->mMidiIface->sendMessage(it->getMidiMessage());
+                        _this->mMidiIface->sendMidiMessage(it->getMidiMessage());
                     }
                 }
             }

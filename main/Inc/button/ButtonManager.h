@@ -8,7 +8,7 @@
 #ifndef MAIN_INC_BUTTON_BUTTONMANAGER_H_
 #define MAIN_INC_BUTTON_BUTTONMANAGER_H_
 
-#include "bluetooth/MidiInterface.h"
+#include "midi/MidiInterface.h"
 #include "button/Button.h"
 #include <list>
 #include <memory>

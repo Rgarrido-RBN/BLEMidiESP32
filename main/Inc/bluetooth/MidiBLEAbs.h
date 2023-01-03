@@ -21,7 +21,7 @@ public:
     virtual int sendMessage(uint8_t *message);
     virtual int outputFlush();
     virtual int midiTick();
-    virtual int getBLEMidiStatus();
+    virtual bool getBLEMidiStatus();
 
 protected:
     bool isOpen{false};

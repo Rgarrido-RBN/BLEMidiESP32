@@ -18,13 +18,13 @@
 class MidiInterface
 {
 public:
-    MidiInterface(UartMidiAbsPtr uartInstance, MidiBLEAbsPtr bleInstance)
-        : mUartMidi(uartInstance)
-        , mBLEMidi(bleInstance){};
+    MidiInterface(UartMidiAbsPtr uartInstance, MidiBLEAbsPtr bleInstance);
     virtual ~MidiInterface() = default;
 
-    int openMidi();
-    int closeMidi();
+    int openMidiBLE();
+    int closeMidiBLE();
+    int openMidiUART();
+    int closeMidiUART();
     int sendMidiMessage(uint8_t *message);
 
 private:
@@ -32,6 +32,6 @@ private:
     std::shared_ptr<MidiBLEAbs> mBLEMidi;
 };
 
-using MidiInterface = std::shared_ptr<MidiInterface>;
+using MidiInterfacePtr = std::shared_ptr<MidiInterface>;
 
 #endif /* MAIN_INC_MIDI_MIDIITERFACE_H_ */

@@ -1,8 +1,8 @@
 /*
  *  UartMidiAbs.h
- *  
+ *
  *  Date: 28 Dec 2022
- *  Author: Rubén Garrido 
+ *  Author: Rubén Garrido
  *  Mail: rgarrido.rbn@gmail.com
  *
  */
@@ -21,9 +21,12 @@ public:
 
     virtual int init();
     virtual int stop();
-    virtual int sendMessage(uint8_t* message);
-    virtual int outputFlush();
+    virtual int sendMessage(uint8_t *message);
     virtual int midiTick();
+    virtual bool getUartMidiStatus();
+
+protected:
+    bool isOpen{false};
 };
 
 using UartMidiAbsPtr = std::shared_ptr<UartMidiAbs>;
