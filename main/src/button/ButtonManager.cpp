@@ -6,12 +6,14 @@
  */
 
 #include "button/ButtonManager.h"
+#include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
 
 const int LED_ON = 1;
 const int LED_OFF = 1;
+static const char* TAG= "ButtonManager";
 
 extern xQueueHandle gpioInterruptQueue;
 
@@ -20,6 +22,7 @@ ButtonManager::ButtonManager(std::list<buttonPtr> buttonList, std::shared_ptr<Mi
     : mButtonList(buttonList)
     , mMidiIface(midiIface)
 {
+    ESP_LOGI(TAG, "Button Manager Initialise");
     mMidiIface->openMidiBLE();
     mMidiIface->openMidiUART();
 

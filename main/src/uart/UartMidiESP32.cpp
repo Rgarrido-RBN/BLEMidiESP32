@@ -30,11 +30,13 @@ UartMidiESP32::UartMidiESP32(int uartPort, int baudrate)
 
 int UartMidiESP32::init()
 {
+    isOpen = true;
     return uartmidi_enable_port(mUartPort, mBaudrate);
 }
 
 int UartMidiESP32::stop()
 {
+    isOpen = false;
     return uartmidi_disable_port(mUartPort);
 }
 

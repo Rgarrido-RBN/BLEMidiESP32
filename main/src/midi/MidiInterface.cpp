@@ -18,6 +18,10 @@ MidiInterface::MidiInterface(UartMidiAbsPtr uartInstance, MidiBLEAbsPtr bleInsta
     : mUartMidi(uartInstance)
     , mBLEMidi(bleInstance)
 {
+    esp_log_level_set(TAG, ESP_LOG_DEBUG);
+
+    // openMidiBLE();
+    // openMidiUART();
     // TODO empty constructor
 }
 
@@ -79,13 +83,15 @@ int MidiInterface::closeMidiUART()
 
 int MidiInterface::sendMidiMessage(uint8_t *message)
 {
-    if(mUartMidi->getUartMidiStatus())
-    {
+     if(mUartMidi->getUartMidiStatus())
+     {
+        ESP_LOGI(TAG, "Sending Uart message");
         mUartMidi->sendMessage(message);
-    }
-    if(mBLEMidi->getBLEMidiStatus())
-    {
+     }
+     if(mBLEMidi->getBLEMidiStatus())
+     {
+        ESP_LOGD(TAG, "Sending midi message");
         mBLEMidi->sendMessage(message);
-    }
+     }
     return 0;
 }

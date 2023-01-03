@@ -95,7 +95,7 @@ void app_main(void)
     {
         // if(status == 0)
         // { // means ble midi interface successfully init
-        bleMidi->sendMessage(message);
+        midiIface->sendMidiMessage(message);
         vTaskDelay(1000 / portTICK_RATE_MS);
         //}
     }
