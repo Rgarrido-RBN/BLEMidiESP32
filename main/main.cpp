@@ -4,6 +4,7 @@
  * @create date 2021-11-21 13:14:41
  * @modify date 2021-12-22 22:58:07
  */
+
 #include "bluetooth/BLEMidiESP32.h"
 #include "button/ButtonManager.h"
 #include "esp_log.h"
@@ -13,6 +14,8 @@
 #include "freertos/task.h"
 #include "gpio/gpioESP32.h"
 #include "led/Led.h"
+#include "midi/MidiInterface.h"
+#include "uart/UartMidiESP32.h"
 #include <iostream>
 #include <string.h>
 
@@ -73,15 +76,14 @@ void app_main(void)
     auto button5 = std::make_shared<Button>(button5Pin, led5, PEDAL_MODE);
     auto button6 = std::make_shared<Button>(button6Pin, led6, PEDAL_MODE);
 
-    auto midiBLEInstance = std::make_shared<BLEMidiESP32>();
-    int status = midiBLEInstance->init();
+    auto uartMidi = std::make_shared<UartMidiESP32>(0, 115200);
+    auto bleMidi = std::make_shared<BLEMidiESP32>();
+    auto midiIface = std::make_shared<MidiInterface>(uartMidi, bleMidi);
+
     std::list<buttonPtr> buttonVector
         = {buttonPresetUp, buttonPresetDown, button1, button2, button3, button4, button5, button6};
 
-    /* TODO: entity which manages midi, usb... */
-
-    // auto pedalboardButtonManager = std::make_shared<ButtonManager>(buttonVector, midiBLEInstance, midiUartInstance);
-    auto pedalboardButtonManager = std::make_shared<ButtonManager>(buttonVector);
+    auto pedalboardButtonManager = std::make_shared<ButtonManager>(buttonVector, midiIface);
 
     /********* DEMO MESSAGE ***********/
     uint8_t message[3];
@@ -91,10 +93,10 @@ void app_main(void)
 
     while(1)
     {
-        if(status == 0)
-        { // means ble midi interface successfully init
-            midiBLEInstance->sendMessage(message);
-            vTaskDelay(1000 / portTICK_RATE_MS);
-        }
+        // if(status == 0)
+        // { // means ble midi interface successfully init
+        midiIface->sendMidiMessage(message);
+        vTaskDelay(1000 / portTICK_RATE_MS);
+        //}
     }
 }

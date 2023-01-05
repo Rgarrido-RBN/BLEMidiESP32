@@ -6,20 +6,26 @@
  */
 
 #include "button/ButtonManager.h"
+#include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
 
 const int LED_ON = 1;
 const int LED_OFF = 1;
+static const char* TAG= "ButtonManager";
 
 extern xQueueHandle gpioInterruptQueue;
 
 // TODO: Send a list of buttons instead of all buttons
-ButtonManager::ButtonManager(std::list<buttonPtr> buttonList, std::shared_ptr<MidiAbs> midiInstance)
+ButtonManager::ButtonManager(std::list<buttonPtr> buttonList, std::shared_ptr<MidiInterface> midiIface)
     : mButtonList(buttonList)
-    , mMidiInstance(midiInstance)
+    , mMidiIface(midiIface)
 {
+    ESP_LOGI(TAG, "Button Manager Initialise");
+    mMidiIface->openMidiBLE();
+    mMidiIface->openMidiUART();
+
     createManageButtonsTask();
 }
 
@@ -31,7 +37,6 @@ void ButtonManager::manageButtonEventsTask(void *args)
 {
     uint32_t buttonPressed;
     ButtonManager *_this = (ButtonManager *)args;
-    uint8_t *messageToSend;
     while(1)
     {
         if(gpioInterruptQueue != NULL)
@@ -42,8 +47,7 @@ void ButtonManager::manageButtonEventsTask(void *args)
                 {
                     if(it->getPin() == buttonPressed)
                     {
-                        _this->mMidiInstance->= it->getMidiMessage();
-                        // TODO: do something with this message
+                        _this->mMidiIface->sendMidiMessage(it->getMidiMessage());
                     }
                 }
             }
